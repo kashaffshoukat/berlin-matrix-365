@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{
+  *{
   margin:0;
   padding:0;
   box-sizing:border-box;
@@ -21,19 +21,22 @@ body{
   align-items:center;
   justify-content:center;
   background:linear-gradient(135deg,#8f2cff,#5b7cff);
+  padding:20px;
 }
 
+/* ===== CONTAINER ===== */
 .login-wrapper{
-  width:1000px;
-  height:520px;
+  width:100%;
+  max-width:1000px;
+  min-height:520px;
   background:#1d1b3a;
-  border-radius:22px;
+  border-radius:24px;
   display:flex;
   overflow:hidden;
   box-shadow:0 40px 120px rgba(0,0,0,.6);
 }
 
-/* LEFT PANEL */
+/* ===== LEFT PANEL ===== */
 .login-left{
   width:40%;
   padding:50px 40px;
@@ -49,8 +52,9 @@ body{
   margin-bottom:30px;
 }
 
+/* Inputs */
 .input-box{
-  margin-bottom:20px;
+  margin-bottom:18px;
 }
 
 .input-box input{
@@ -61,8 +65,18 @@ body{
   outline:none;
   background:#26245c;
   color:#fff;
+  font-size:15px;
 }
 
+.input-box input::placeholder{
+  color:rgba(255,255,255,.6);
+}
+
+.input-box input:focus{
+  outline:2px solid rgba(255,255,255,.25);
+}
+
+/* Button */
 .login-btn{
   margin-top:10px;
   padding:14px;
@@ -72,10 +86,13 @@ body{
   color:#fff;
   font-weight:600;
   cursor:pointer;
+  font-size:15px;
+  transition:.25s ease;
 }
 
 .login-btn:hover{
-  opacity:.9;
+  transform:translateY(-1px);
+  box-shadow:0 10px 25px rgba(255,47,220,.35);
 }
 
 .error{
@@ -85,7 +102,7 @@ body{
   display:none;
 }
 
-/* RIGHT PANEL */
+/* ===== RIGHT PANEL ===== */
 .login-right{
   width:60%;
   padding:60px;
@@ -101,10 +118,57 @@ body{
 }
 
 .login-right p{
-  opacity:.7;
+  opacity:.75;
   max-width:420px;
-  line-height:1.6;
+  line-height:1.7;
+  font-size:15px;
 }
+
+/* ===== TABLET ===== */
+@media (max-width: 900px){
+  .login-wrapper{
+    flex-direction:column;
+    max-width:520px;
+  }
+
+  .login-left,
+  .login-right{
+    width:100%;
+  }
+
+  .login-right{
+    padding:40px;
+    text-align:center;
+  }
+
+  .login-right p{
+    margin:0 auto;
+  }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 520px){
+  body{
+    padding:12px;
+  }
+
+  .login-wrapper{
+    border-radius:18px;
+  }
+
+  .login-left{
+    padding:36px 26px;
+  }
+
+  .login-left h2{
+    font-size:24px;
+  }
+
+  .login-right{
+    display:none;
+  }
+}
+
 </style>
 </head>
 
