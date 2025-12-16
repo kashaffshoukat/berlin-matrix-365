@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Island Moments – Clubnights</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#1A1F2B;
+  --secondary:#00A6A6;
+  --accent:#F2C94C;
+  --matrix-blue:#223C52;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0f1c29;
+  color:#fff;
+}
+
+header{
+  padding:32px 48px;
+  background:linear-gradient(180deg,#0b1622,#0f1c29);
+  position:relative;
+}
+
+header h1{
+  font-size:42px;
+  margin-bottom:12px;
+}
+
+.countdown{
+  font-size:14px;
+  font-weight:700;
+  padding:8px 14px;
+  border-radius:20px;
+  display:inline-block;
+  color:#000;
+  margin-bottom:12px;
+}
+
+.days-scroll{
+  display:flex;
+  gap:28px;
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+
+.days-scroll::-webkit-scrollbar{display:none}
+
+.day{
+  font-size:16px;
+  opacity:.6;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.day.active{opacity:1}
+
+.day.active::after{
+  content:'';
+  display:block;
+  height:3px;
+  background:#ff2e93;
+  margin-top:6px;
+  border-radius:2px;
+}
+
+.search{margin-top:20px}
+.search input{
+  width:100%;
+  padding:14px 20px;
+  border-radius:30px;
+  border:none;
+  outline:none;
+}
+
+main{padding:40px 48px 80px}
+
+.event-card{
+  display:grid;
+  grid-template-columns:480px 1fr;
+  background:var(--matrix-blue);
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.event-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.event-info{
+  padding:36px 40px;
+  background:linear-gradient(90deg,rgba(34,60,82,.95),rgba(34,60,82,.85));
+}
+
+.event-info h2{font-size:28px;margin-bottom:10px}
+
+.actions{
+  margin-top:20px;
+  display:flex;
+  gap:14px;
+}
+
+.btn{
+  padding:12px 26px;
+  border-radius:30px;
+  background:#fff;
+  color:#0f1c29;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.btn-outline{
+  background:transparent;
+  border:1px solid #fff;
+  color:#fff;
+}
+
+/* Gallery */
+.gallery-section{
+  padding:80px 48px;
+  background:#0b1622;
+}
+
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+}
+
+.gallery-grid img{
+  width:100%;
+  border-radius:14px;
+  cursor:pointer;
+}
+
+/* Chat */
+.support-chat{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:280px;
+  background:#fff;
+  color:#000;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.chat-header{
+  background:var(--accent);
+  padding:12px;
+  text-align:center;
+  font-weight:700;
+}
+
+.chat-body{padding:12px}
+
+.chat-input{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-top:1px solid #ddd;
+}
+
+.top-right-controls{
+  position:absolute;
+  top:20px;
+  right:30px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* ADMIN BUTTON */
+#adminBtn{
+  background:transparent;
+  border:2px solid #fff;
+  color:#fff;
+  padding:8px 22px;
+  border-radius:999px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  line-height:1;
+  transition:.25s ease;
+}
+
+#adminBtn:hover{
+  background:#fff;
+  color:#0f1c29;
+}
+
+/* LANGUAGE SWITCH */
+#langSwitch{
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  line-height:1;
+  padding:8px 10px;
+  user-select:none;
+}.payment-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e11d48;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 5;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="top-right-controls">
+  <button id="adminBtn">Admin</button>
+  <div id="langSwitch" title="Deutsch">DE</div>
+</div>
+
+<h1>Clubnights</h1>
+
+<div id="countdown" class="countdown"></div>
+<div class="days-scroll" id="days"></div>
+
+<div class="search">
+  <input id="search" placeholder="Search events..." />
+</div>
+</header>
+
+<div id="noResults" style="
+  display:none;
+  padding:40px;
+  text-align:center;
+  opacity:.7;
+  font-size:18px;
+">
+  No event found
+</div>
+
+<main>
+  <div id="event"></div>
+</main>
+
+<section class="gallery-section">
+  <h2>Event Gallery</h2>
+  <p class="gallery-sub">All photos free at launch • Tap to open • Download available</p>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+<section style="margin:60px auto;max-width:600px">
+  <h2>Leave a Review</h2>
+
+  <select id="reviewRating" style="width:100%;padding:12px;margin:10px 0;border-radius:10px">
+    <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+    <option value="4">⭐⭐⭐⭐ (4)</option>
+    <option value="3">⭐⭐⭐ (3)</option>
+    <option value="2">⭐⭐ (2)</option>
+    <option value="1">⭐ (1)</option>
+  </select>
+
+  <textarea
+    id="reviewText"
+    placeholder="Share your experience…"
+    style="width:100%;height:90px;padding:12px;border-radius:10px"
+  ></textarea>
+
+  <button
+    onclick="submitReview()"
+    style="margin-top:12px;background:#00A6A6;color:#fff;border:none;padding:12px 20px;border-radius:30px;cursor:pointer"
+  >
+    Submit Review
+  </button>
+</section>
+
+<div class="support-chat">
+  <div class="chat-header">Support</div>
+  <div class="chat-body" id="chatBody">
+    <div class="bot">👋 Hi! What’s your Instagram handle?</div>
+  </div>
+  <input class="chat-input" placeholder="@yourhandle" />
+</div>
+
+<script>
+  
+/* ================= DATA ================= */
+const today = new Date();
+
+const events = [
+  {
+    index: 0,
+    label: 'Monday',
+    weekday: 'Mon',
+    date: '',
+    title: 'Matrix Monday – Hip Hop & RnB',
+    music: ['Hip Hop', 'RnB', 'Urban'],
+    dj: 'DJ Rasimcan',
+    note: 'Free entry before 23:00',
+    img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819'
+  },
+  {
+    index: 1,
+    label: 'Tuesday',
+    weekday: 'Tue',
+    date: '',
+    title: 'Electric Tuesday – Techno',
+    music: ['Techno', 'Minimal'],
+    dj: 'DJ Le Alen',
+    note: 'All night techno',
+    img: 'https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2'
+  },
+  {
+    index: 2,
+    label: 'Wednesday',
+    weekday: 'Wed',
+    date: '',
+    title: 'Island Wednesday – Afrobeats',
+    music: ['Afrobeats', 'Dancehall'],
+    dj: 'DJ Lito Bolton',
+    note: 'Island vibes all night',
+    img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30'
+  },
+  {
+    index: 3,
+    label: 'Thursday',
+    weekday: 'Thu',
+    title: 'Latin Night',
+    music: ['Reggaeton', 'Latin'],
+    dj: 'DJ Carlos',
+    note: 'Hot Latin rhythms',
+    img: 'https://images.unsplash.com/photo-1545128485-c400e7702796'
+  },
+  {
+    index: 4,
+    label: 'Friday',
+    weekday: 'Fri',
+    title: 'Clubnight Friday',
+    music: ['House', 'EDM'],
+    dj: 'DJ Mike',
+    note: 'Biggest party of the week',
+    img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063'
+  },
+  {
+    index: 5,
+    label: 'Saturday',
+    weekday: 'Sat',
+    title: 'Main Event Saturday',
+    music: ['Mixed', 'Charts'],
+    dj: 'Resident DJs',
+    note: 'Peak night',
+    img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7'
+  },
+  {
+    index: 6,
+    label: 'Sunday',
+    weekday: 'Sun',
+    title: 'After Hour Sunday',
+    music: ['Chill', 'Deep House'],
+    dj: 'DJ Relax',
+    note: 'Smooth closing vibes',
+    img: 'https://images.unsplash.com/photo-1515169067865-5387ec356754'
+  }
+];
+
+
+/* ================= ELEMENTS ================= */
+const daysEl=document.getElementById('days');
+const eventEl=document.getElementById('event');
+const searchEl=document.getElementById('search');
+const countdownEl=document.getElementById('countdown');
+const flag=document.getElementById('langSwitch');
+const noResultsEl=document.getElementById('noResults');
+
+/* ================= BUILD DAYS (NEW – SAFE ADDITION) ================= */
+function buildDays(filterIndex=null){
+  daysEl.innerHTML='';
+  const used=new Set();
+
+  events.forEach(e=>{
+    if(filterIndex!==null && e.index!==filterIndex) return;
+
+    const key=e.label==='Today'?'Today':e.weekday;
+    if(used.has(key)) return;
+    used.add(key);
+
+    const d=document.createElement('div');
+    d.className='day'+((filterIndex===null && e.index===0)||(filterIndex===e.index)?' active':'');
+    d.textContent=key;
+    d.onclick=()=>selectEvent(e.index);
+    daysEl.appendChild(d);
+  });
+}function getTodayIndex() {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+  return events.findIndex(e => e.weekday === today);
+}
+
+
+/* ================= RENDER ================= */
+function render(e){
+  eventEl.innerHTML=`
+  <div class="event-card">
+    <img src="${e.img}">
+    <div class="event-info">
+      <div>${e.label} ${e.date} | 22:00</div>
+      <h2>${e.title}</h2>
+      <ul>
+        <li>🎵 ${e.music.join(' · ')}</li>
+        <li>🎧 ${e.dj}</li>
+        <li>⭐ ${e.note}</li>
+      </ul>
+      <div class="actions">
+        <a class="btn">More information</a>
+        <a class="btn btn-outline">Reserve a table</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function selectEvent(i){
+  document.querySelectorAll('.day').forEach(d=>d.classList.remove('active'));
+  const e=events[i];
+  [...daysEl.children].forEach(d=>{
+    if(d.textContent===(e.label==='Today'?'Today':e.weekday)) d.classList.add('active');
+  });
+  render(e);
+}
+
+/* ================= COUNTDOWN ================= */
+function updateCountdown(){
+  const end=events.at(-1).dateObj;
+  const days=Math.max(0,Math.ceil((end-new Date())/86400000));
+  countdownEl.style.background=days<=5?'#e63946':days<=10?'#f2c94c':'#2ecc71';
+  countdownEl.textContent=`${days} ${translations[currentLang].daysLeft}`;
+}
+
+/* ================= SEARCH (UPDATED, SAFE) ================= */
+searchEl.addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase().trim();
+
+  if(!q){
+    noResultsEl.style.display='none';
+    eventEl.style.display='block';
+    buildDays();
+    selectEvent(0);
+    return;
+  }
+
+  const found=events.find(ev=>
+    ev.title.toLowerCase().includes(q)||
+    ev.music.join(' ').toLowerCase().includes(q)||
+    ev.dj.toLowerCase().includes(q)||
+    ev.note.toLowerCase().includes(q)
+  );
+
+  if(found){
+    noResultsEl.style.display='none';
+    eventEl.style.display='block';
+    buildDays(found.index);
+    selectEvent(found.index);
+  }else{
+    eventEl.style.display='none';
+    daysEl.innerHTML='';
+    noResultsEl.style.display='block';
+    noResultsEl.textContent=translations[currentLang].noResults;
+  }
+});
+
+/* ================= LANGUAGE ================= */
+let currentLang='en';
+
+const translations={
+  en:{
+    club:'Clubnights',
+    search:'Search events...',
+    gallery:'Event Gallery',
+    gallerySub:'All photos free at launch • Tap to open • Download available',
+    more:'More information',
+    reserve:'Reserve a table',
+    support:'Support',
+    chat:'👋 Hi! What’s your Instagram handle?',
+    daysLeft:'DAYS LEFT',
+    noResults:'No event found'
+  },
+  de:{
+    club:'Clubnächte',
+    search:'Events suchen…',
+    gallery:'Event Galerie',
+    gallerySub:'Alle Fotos gratis • Antippen • Download verfügbar',
+    more:'Mehr Informationen',
+    reserve:'Tisch reservieren',
+    support:'Support',
+    chat:'👋 Wie lautet dein Instagram-Name?',
+    daysLeft:'TAGE ÜBRIG',
+    noResults:'Kein Event gefunden'
+  }
+};
+
+flag.onclick=()=>{
+  currentLang=currentLang==='en'?'de':'en';
+  applyLang();
+};
+
+function applyLang(){
+  const t=translations[currentLang];
+  document.querySelector('h1').textContent=t.club;
+  searchEl.placeholder=t.search;
+  document.querySelector('.gallery-section h2').textContent=t.gallery;
+  document.querySelector('.gallery-sub').textContent=t.gallerySub;
+  document.querySelector('.chat-header').textContent=t.support;
+  document.getElementById('chatBody').innerHTML=`<div class="bot">${t.chat}</div>`;
+  document.querySelector('.btn').textContent=t.more;
+  document.querySelector('.btn-outline').textContent=t.reserve;
+  flag.textContent=currentLang==='en'?'DE':'EN';
+  updateCountdown();
+  if(noResultsEl.style.display==='block') noResultsEl.textContent=t.noResults;
+}
+
+/* ================= INIT ================= */
+const todayIndex = getTodayIndex();
+
+buildDays();
+selectEvent(todayIndex !== -1 ? todayIndex : 0);
+updateCountdown();
+setInterval(updateCountdown,3600000);
+
+document.getElementById('adminBtn').onclick=()=>{
+window.location.href='admin-login.html';
+};// ===== SIMPLE ANALYTICS =====
+const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
+
+analytics.visits = (analytics.visits || 0) + 1;
+
+// unique user (per browser)
+if (!localStorage.getItem('uniqueUser')) {
+  localStorage.setItem('uniqueUser', '1');
+  analytics.uniqueUsers = (analytics.uniqueUsers || 0) + 1;
+}
+
+localStorage.setItem('analytics', JSON.stringify(analytics));
+const galleryGrid = document.getElementById('galleryGrid');
+
+function renderEventGallery() {
+  const items = JSON.parse(localStorage.getItem('eventGallery') || '[]');
+  galleryGrid.innerHTML = '';
+
+  if (!items.length) return;
+
+  const price = localStorage.getItem('price') || 3;
+  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+
+  let currentDate = '';
+
+  items.forEach(item => {
+    if (item.date !== currentDate) {
+      currentDate = item.date;
+
+      const h = document.createElement('h3');
+      h.textContent = new Date(item.date).toDateString();
+      h.style.gridColumn = '1 / -1';
+      h.style.margin = '30px 0 10px';
+      galleryGrid.appendChild(h);
+    }
+
+    const wrap = document.createElement('div');
+    wrap.style.position = 'relative';
+
+    const img = document.createElement('img');
+    img.src = item.url;
+
+    // 🔒 Payments Disabled badge
+    if (!paymentsEnabled) {
+      const badge = document.createElement('div');
+      badge.className = 'payment-badge';
+      badge.textContent = 'Payments Disabled';
+      wrap.appendChild(badge);
+    }
+
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.style.position = 'absolute';
+    btn.style.bottom = '10px';
+    btn.style.left = '10px';
+    btn.textContent = paymentsEnabled
+      ? `⬇ Download ($${price})`
+      : '🔒 Downloads Disabled';
+
+    btn.onclick = () => handleDownload(item.url);
+
+    wrap.appendChild(img);
+    wrap.appendChild(btn);
+    galleryGrid.appendChild(wrap);
+  });
+}
+
+function isPaid(url){
+  const paid = JSON.parse(localStorage.getItem('paid') || '[]');
+  return paid.includes(url);
+}
+
+function markPaid(url){
+  const paid = JSON.parse(localStorage.getItem('paid') || '[]');
+  paid.push(url);
+  localStorage.setItem('paid', JSON.stringify(paid));
+}
+function submitReview(){
+  const rating = document.getElementById('reviewRating').value;
+  const text = document.getElementById('reviewText').value.trim();
+
+  if (!text) {
+    alert('Please write a review');
+    return;
+  }
+
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+
+  reviews.unshift({
+    rating,
+    text,
+    date: Date.now()
+  });
+
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+
+  document.getElementById('reviewText').value = '';
+  alert('Thank you for your review!');
+}
+function handleDownload(url) {
+  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+
+  if (!paymentsEnabled) {
+    alert('Payments are not activated yet');
+    return;
+  }
+
+  // ✅ Allow download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // 📊 Analytics
+  const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
+  analytics.downloads = (analytics.downloads || 0) + 1;
+  localStorage.setItem('analytics', JSON.stringify(analytics));
+}
+function handleDownload(url) {
+  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+
+  if (!paymentsEnabled) {
+    alert('Payments are not activated yet');
+    return;
+  }
+
+  // ✅ Force real download
+  fetch(url)
+    .then(res => res.blob())
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'island-moments.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+
+      // 📊 Analytics
+      const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
+      analytics.downloads = (analytics.downloads || 0) + 1;
+      localStorage.setItem('analytics', JSON.stringify(analytics));
+    });
+}
+function handleDownload(url) {
+  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+
+  // ❌ If payments are disabled → STOP
+  if (!paymentsEnabled) {
+    alert('Payments are disabled by admin');
+    return;
+  }
+
+  // ✅ Allow download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+renderEventGallery();
+
+</script>
+<script src="firebase.js" type="module"></script>
+<script type="module" src="./auth.js"></script></body>
+</html>
