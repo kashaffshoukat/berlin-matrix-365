@@ -22,63 +22,117 @@ body{
   background:#0f1c29;
   color:#fff;
 }
+/* ================= RESPONSIVE HEADER ================= */
 
 header{
-  padding:32px 48px;
+  padding:48px 56px 36px;
   background:linear-gradient(180deg,#0b1622,#0f1c29);
   position:relative;
 }
 
+/* Title */
 header h1{
-  font-size:42px;
-  margin-bottom:12px;
+  font-size:clamp(26px,4vw,42px);
+  margin-bottom:14px;
 }
 
+/* Top right controls */
+.top-right-controls{
+  position:absolute;
+  top:24px;
+  right:32px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* Countdown */
 .countdown{
   font-size:14px;
   font-weight:700;
-  padding:8px 14px;
-  border-radius:20px;
+  padding:8px 16px;
+  border-radius:999px;
   display:inline-block;
-  color:#000;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
+/* Days scroll */
 .days-scroll{
   display:flex;
-  gap:28px;
+  gap:24px;
   overflow-x:auto;
-  padding-bottom:10px;
+  padding-bottom:8px;
 }
 
-.days-scroll::-webkit-scrollbar{display:none}
-
 .day{
-  font-size:16px;
+  font-size:15px;
   opacity:.6;
   cursor:pointer;
   white-space:nowrap;
 }
 
-.day.active{opacity:1}
-
-.day.active::after{
-  content:'';
-  display:block;
-  height:3px;
-  background:#ff2e93;
-  margin-top:6px;
-  border-radius:2px;
+.day.active{
+  opacity:1;
 }
 
-.search{margin-top:20px}
+/* Search */
+.search{
+  margin-top:22px;
+}
+
 .search input{
   width:100%;
-  padding:14px 20px;
-  border-radius:30px;
+  padding:14px 22px;
+  border-radius:999px;
   border:none;
   outline:none;
+  font-size:15px;
 }
+
+/* ================= TABLET ================= */
+@media (max-width: 900px){
+  header{
+    padding:36px 32px;
+  }
+
+  .top-right-controls{
+    top:18px;
+    right:20px;
+  }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 600px){
+  header{
+    padding:26px 18px 30px;
+  }
+
+  /* Move controls into flow */
+  .top-right-controls{
+    position:static;
+    justify-content:flex-end;
+    margin-bottom:14px;
+  }
+
+  header h1{
+    text-align:left;
+  }
+
+  .countdown{
+    font-size:13px;
+    padding:6px 12px;
+  }
+
+  .days-scroll{
+    gap:18px;
+  }
+
+  .search input{
+    padding:12px 18px;
+    font-size:14px;
+  }
+}
+
 
 main{padding:40px 48px 80px}
 
@@ -259,7 +313,7 @@ main{padding:40px 48px 80px}
   <p class="gallery-sub">All photos free at launch • Tap to open • Download available</p>
   <div class="gallery-grid" id="galleryGrid"></div>
 </section>
-<section style="margin:60px auto;max-width:600px">
+<section style="margin:60px auto;max-width:80%">
   <h2>Leave a Review</h2>
 
   <select id="reviewRating" style="width:100%;padding:12px;margin:10px 0;border-radius:10px">
