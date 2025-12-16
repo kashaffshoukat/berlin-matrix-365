@@ -20,7 +20,6 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  background:linear-gradient(135deg,#8f2cff,#5b7cff);
   padding:20px;
 }
 
@@ -38,9 +37,8 @@ body{
 
 /* ===== LEFT PANEL ===== */
 .login-left{
-  width:40%;
-  padding:50px 40px;
-  background:#171531;
+  width:100%;
+  padding:50px 80px;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -50,6 +48,7 @@ body{
   color:#fff;
   font-size:28px;
   margin-bottom:30px;
+  text-align: center;
 }
 
 /* Inputs */
@@ -66,6 +65,7 @@ body{
   background:#26245c;
   color:#fff;
   font-size:15px;
+  text-align: ;
 }
 
 .input-box input::placeholder{
@@ -104,10 +104,9 @@ body{
 
 /* ===== RIGHT PANEL ===== */
 .login-right{
-  width:60%;
+  width:100%;
   padding:60px;
   display:flex;
-  flex-direction:column;
   justify-content:center;
   color:#fff;
 }
@@ -118,7 +117,6 @@ body{
 }
 
 .login-right p{
-  opacity:.75;
   max-width:420px;
   line-height:1.7;
   font-size:15px;
@@ -128,7 +126,7 @@ body{
 @media (max-width: 900px){
   .login-wrapper{
     flex-direction:column;
-    max-width:520px;
+    max-width:100%;
   }
 
   .login-left,
@@ -136,14 +134,7 @@ body{
     width:100%;
   }
 
-  .login-right{
-    padding:40px;
-    text-align:center;
-  }
-
-  .login-right p{
-    margin:0 auto;
-  }
+ 
 }
 
 /* ===== MOBILE ===== */
@@ -157,16 +148,14 @@ body{
   }
 
   .login-left{
-    padding:36px 26px;
+    padding:96px 26px;
   }
 
   .login-left h2{
     font-size:24px;
   }
 
-  .login-right{
-    display:none;
-  }
+ 
 }
 
 </style>
@@ -193,14 +182,7 @@ body{
     <div class="error" id="error">Invalid credentials</div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="login-right">
-    <h1>Welcome.</h1>
-    <p>
-      This admin panel is protected by authentication and role-based authorization.
-      Only verified users with assigned roles can access management features.
-    </p>
-  </div>
+ 
 
 </div>
 
