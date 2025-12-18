@@ -605,51 +605,92 @@ localStorage.setItem('analytics', JSON.stringify(analytics));
 const galleryGrid = document.getElementById('galleryGrid');
 
 function renderEventGallery() {
-  const items = JSON.parse(localStorage.getItem('eventGallery') || '[]');
-  galleryGrid.innerHTML = '';
+  const now = Date.now();
 
+  const items = JSON.parse(localStorage.getItem('eventGallery') || '[]')
+    .filter(i => i.expiresAt > now);
+
+  const covers = JSON.parse(localStorage.getItem('albumCovers') || '{}');
+
+  galleryGrid.innerHTML = '';
   if (!items.length) return;
 
-  const price = localStorage.getItem('price') || 3;
-  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+  // group by date
+  const grouped = {};
+  items.forEach(i => {
+    if (!grouped[i.date]) grouped[i.date] = [];
+    grouped[i.date].push(i);
+  });
 
-  let currentDate = '';
-
-  items.forEach(item => {
-    if (item.date !== currentDate) {
-      currentDate = item.date;
-
-      const h = document.createElement('h3');
-      h.textContent = new Date(item.date).toDateString();
-      h.style.gridColumn = '1 / -1';
-      h.style.margin = '30px 0 10px';
-      galleryGrid.appendChild(h);
-    }
+  Object.keys(grouped).forEach(date => {
+    const coverUrl = covers[date] || grouped[date][0].url;
 
     const wrap = document.createElement('div');
     wrap.style.position = 'relative';
+    wrap.style.cursor = 'pointer';
 
     const img = document.createElement('img');
+    img.src = coverUrl;
+
+    const label = document.createElement('div');
+    label.textContent = new Date(date).toDateString();
+    label.style.position = 'absolute';
+    label.style.bottom = '12px';
+    label.style.left = '12px';
+    label.style.background = 'rgba(0,0,0,.7)';
+    label.style.padding = '6px 12px';
+    label.style.borderRadius = '999px';
+    label.style.fontSize = '13px';
+    label.style.fontWeight = '600';
+
+    wrap.appendChild(img);
+    wrap.appendChild(label);
+
+    wrap.onclick = () => openAlbum(date, grouped[date]);
+
+    galleryGrid.appendChild(wrap);
+  });
+}
+function openAlbum(date, photos) {
+  galleryGrid.innerHTML = '';
+
+  const h = document.createElement('h2');
+  h.textContent = new Date(date).toDateString();
+  h.style.gridColumn = '1 / -1';
+  h.style.margin = '10px 0 20px';
+
+  galleryGrid.appendChild(h);
+
+  photos.forEach(item => {
+    const wrap = document.createElement('div');
+    wrap.style.position = 'relative';
+
+    // IMAGE
+    const img = document.createElement('img');
     img.src = item.url;
+    img.style.width = '100%';
+    img.style.borderRadius = '14px';
 
-    // 🔒 Payments Disabled badge
-    if (!paymentsEnabled) {
-      const badge = document.createElement('div');
-      badge.className = 'payment-badge';
-      badge.textContent = 'Payments Disabled';
-      wrap.appendChild(badge);
-    }
-
+    // DOWNLOAD BUTTON
     const btn = document.createElement('button');
+    btn.textContent = 'Download';
     btn.className = 'btn';
     btn.style.position = 'absolute';
-    btn.style.bottom = '10px';
-    btn.style.left = '10px';
-    btn.textContent = paymentsEnabled
-      ? `⬇ Download ($${price})`
-      : '🔒 Downloads Disabled';
+    btn.style.bottom = '12px';
+    btn.style.left = '50%';
+    btn.style.transform = 'translateX(-50%)';
 
     btn.onclick = () => handleDownload(item.url);
+
+    // PAYMENT BADGE
+    const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+  if (paymentsEnabled) {
+  const badge = document.createElement('div');
+  badge.className = 'payment-badge';
+  badge.textContent = 'Paid';
+  wrap.appendChild(badge);
+}
+
 
     wrap.appendChild(img);
     wrap.appendChild(btn);
@@ -692,67 +733,53 @@ function submitReview(){
 function handleDownload(url) {
   const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
 
-  if (!paymentsEnabled) {
-    alert('Payments are not activated yet');
-    return;
-  }
-
-  // ✅ Allow download
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = '';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  // 📊 Analytics
-  const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
-  analytics.downloads = (analytics.downloads || 0) + 1;
-  localStorage.setItem('analytics', JSON.stringify(analytics));
-}
-function handleDownload(url) {
-  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
-
-  if (!paymentsEnabled) {
-    alert('Payments are not activated yet');
-    return;
-  }
-
-  // ✅ Force real download
-  fetch(url)
-    .then(res => res.blob())
-    .then(blob => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'island-moments.jpg';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-
-      // 📊 Analytics
-      const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
-      analytics.downloads = (analytics.downloads || 0) + 1;
-      localStorage.setItem('analytics', JSON.stringify(analytics));
-    });
-}
-function handleDownload(url) {
-  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
-
-  // ❌ If payments are disabled → STOP
+  // ❌ Block if payments disabled
   if (!paymentsEnabled) {
     alert('Payments are disabled by admin');
     return;
   }
 
-  // ✅ Allow download
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = '';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  // ✅ Force download to device
+  fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+
+      a.href = objectUrl;
+      a.download = 'photo.jpg'; // saved to device
+
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objectUrl);
+    })
+    .catch(() => {
+      alert('Download failed');
+    });
 }
+
+// ✅ After Stripe success → force download
+const params = new URLSearchParams(window.location.search);
+if (params.get("paid") === "true") {
+  const imageUrl = params.get("url");
+  if (imageUrl) {
+    window.location.href = `http://localhost:4242/download?url=${imageUrl}`;
+  }
+}
+
+function cleanupExpiredPhotos() {
+  const now = Date.now();
+
+  ['images', 'eventGallery'].forEach(key => {
+    const data = JSON.parse(localStorage.getItem(key) || '[]')
+      .filter(i => i.expiresAt > now);
+    localStorage.setItem(key, JSON.stringify(data));
+  });
+}
+
+cleanupExpiredPhotos();
 
 renderEventGallery();
 
