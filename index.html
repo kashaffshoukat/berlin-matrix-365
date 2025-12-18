@@ -272,6 +272,46 @@ main{padding:40px 48px 80px}
   font-weight: 700;
   z-index: 5;
 }
+/* ===== MOBILE EVENT CARD FIX ===== */
+@media (max-width: 768px) {
+  .event-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+  }
+
+  .event-info {
+    padding: 40px;
+    background: linear-gradient(
+      180deg,
+      rgba(34,60,82,0.95),
+      rgba(34,60,82,1)
+    );
+  }
+}
+/* ===== MOBILE EVENT CARD BUTTON FIX ===== */
+@media (max-width: 768px) {
+
+  .event-info .actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .event-info .actions .btn {
+    width: 100%;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 16px;
+    border-radius: 999px;
+  }
+
+}
 
 </style>
 </head>
