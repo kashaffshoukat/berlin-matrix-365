@@ -1,0 +1,58 @@
+import express from "express";
+import Stripe from "stripe";
+import cors from "cors";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// 🔑 CLIENT WILL SEND THESE
+const STRIPE_SECRET_KEY = "sk_test_PASTE_CLIENT_KEY_HERE";
+const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+// ✅ Create Stripe Checkout Session
+app.post("/create-checkout-session", async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Photo Download",
+              description: "Island Moments photo download",
+            },
+            unit_amount: 300, // $3.00
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `http://127.0.0.1:5500/public/index.html?paid=true&url=${encodeURIComponent(imageUrl)}`,
+      cancel_url: `http://127.0.0.1:5500/public/index.html`,
+    });
+
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 🔐 Secure download endpoint
+app.get("/download", async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.sendStatus(400);
+
+  const response = await fetch(url);
+  const buffer = await response.arrayBuffer();
+
+  res.setHeader("Content-Disposition", "attachment; filename=island-moments.jpg");
+  res.send(Buffer.from(buffer));
+});
+
+app.listen(4242, () => {
+  console.log("✅ Stripe server running on http://localhost:4242");
+});
