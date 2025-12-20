@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard – Island Moments</title>
+    <title>Admin Dashboard – Island Moments Gallery</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -237,6 +237,27 @@
   background:linear-gradient(135deg,#111,#333);
   box-shadow:0 4px 10px rgba(0,0,0,.3);
 }
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.nav-logo{
+  height:100px;
+  width:auto;
+}
+@media (max-width:600px){
+ 
+
+  .nav-logo{
+    height:100px;
+  }
+
+  .nav-left h1{
+    font-size:18px;
+  }
+}
 
     </style>
 </head>
@@ -245,7 +266,10 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <h2>Island Moments</h2>
+           <div class="nav-left">
+    <img src="flogo.png" alt="Island Moments Gallery" class="nav-logo">
+    <h1>Clubnights</h1>
+  </div>
         <div class="nav">
             <a class="active" onclick="showSection('upload', this)">Upload</a>
             <a onclick="showSection('analytics', this)">Analytics</a>
@@ -276,14 +300,6 @@
                     <input type="file" id="fileInput" multiple />
                 </label>
             </div>
-            <div style="margin-bottom:20px">
-  <label class="expiry-label">
-    <span>🖼️</span> Album Cover (for today)
-  </label>
-
-  <input type="file" id="coverInput" accept="image/*" class="expiry-input">
-</div>
-
 <div style="display:flex;gap:10px;align-items:center">
   
 </div>
@@ -527,27 +543,6 @@ setDefaultDateTime();
 
 
         }
-const coverInput = document.getElementById('coverInput');
-
-if (coverInput) {
-  coverInput.addEventListener('change', async () => {
-    const file = coverInput.files[0];
-    if (!file) return;
-
-    const data = await uploadImage(file);
-    if (!data.secure_url) return;
-
-    const today = new Date().toISOString().split('T')[0];
-
-    const covers = JSON.parse(localStorage.getItem('albumCovers') || '{}');
-    covers[today] = data.secure_url;
-
-    localStorage.setItem('albumCovers', JSON.stringify(covers));
-
-    alert('✅ Album cover saved for ' + today);
-    coverInput.value = '';
-  });
-}
 
         /* DEFAULT VIEW */
         showSection('upload', document.querySelector('.nav a'));
