@@ -312,19 +312,83 @@ main{padding:40px 48px 80px}
   }
 
 }
+/* ===== NAVBAR ONE LINE ===== */
+.navbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+ min-height:80px;          /* 👈 controls height */
+  padding:0 56px; 
+  background:linear-gradient(180deg,#0b1622,#0f1c29);
+}
+
+/* LEFT */
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.nav-logo{
+  height:100px;
+  width:auto;
+}
+
+/* RIGHT */
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.navbar h1{
+  margin:0;                 /* 👈 removes extra height */
+  font-size:32px;
+}
+
+/* REMOVE OLD ABSOLUTE POSITIONING */
+.top-right-controls{
+  position:static !important;
+}
+
+/* MOBILE */
+@media (max-width:600px){
+  .navbar{
+    padding:20px 18px;
+  }
+
+  .nav-logo{
+    height:100px;
+  }
+
+  .nav-left h1{
+    font-size:24px;
+  }
+}
 
 </style>
 </head>
 
 <body>
 
-<header>
-<div class="top-right-controls">
-  <button id="adminBtn">Admin</button>
-  <div id="langSwitch" title="Deutsch">DE</div>
-</div>
+<header class="navbar">
 
-<h1>Clubnights</h1>
+  <!-- LEFT: LOGO + TITLE -->
+  <div class="nav-left">
+    <img src="flogo.png" alt="Island Moments Gallery" class="nav-logo">
+    <h1>Clubnights</h1>
+  </div>
+
+  <!-- RIGHT: CONTROLS -->
+  <div class="nav-right">
+    <button id="adminBtn">Admin</button>
+    <div id="langSwitch" title="Deutsch">DE</div>
+  </div>
+
+</header>
+
+<header>
+
+
 
 <div id="countdown" class="countdown"></div>
 <div class="days-scroll" id="days"></div>
