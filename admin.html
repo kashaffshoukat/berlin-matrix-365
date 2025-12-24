@@ -260,6 +260,26 @@
     font-size:18px;
   }
 }
+.cover-btn {
+  position: absolute;
+  top: 10px;
+  right: 48px; /* leaves space for delete (X) */
+  background: rgba(0, 166, 166, 0.95);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 6;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.cover-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.25);
+}
 
 
 
@@ -706,8 +726,38 @@ w.appendChild(badge);
                 d.className = 'delete-btn';
                 d.onclick = () => deleteItem(i.url);
                 w.appendChild(d);
+// ===== SET ALBUM COVER BUTTON =====
+// const coverBtn = document.createElement('button');
+// coverBtn.className = 'cover-btn';
+// coverBtn.textContent = 'Set as Cover';
+// coverBtn.onclick = () => setAlbumCover(i.date, i.url);
 
-                gallery.appendChild(w);
+// ===== SET / CHANGE ALBUM COVER =====
+// ===== SET / CHANGE ALBUM COVER =====
+const coverBtn = document.createElement('button');
+coverBtn.className = 'cover-btn';
+coverBtn.textContent = 'Set as Cover';
+
+const covers = JSON.parse(localStorage.getItem('albumCovers') || {});
+
+// If this image is already the cover
+if (covers[i.date] === i.url) {
+  coverBtn.textContent = '✓ Cover';
+  coverBtn.style.background = '#22c55e';
+  coverBtn.style.cursor = 'default';
+}
+
+coverBtn.onclick = () => {
+  if (covers[i.date] === i.url) return;
+
+  if (!confirm('Set this image as the new cover for this day?')) return;
+
+  setAlbumCover(i.date, i.url);
+  render(currentTab);
+};
+gallery.appendChild(w);
+
+w.appendChild(coverBtn);
             });
         }
 setInterval(() => {
@@ -728,6 +778,14 @@ setInterval(() => {
     badge.textContent = getTimeLeft(item.expiresAt);
   });
 }, 60000);
+function setAlbumCover(date, url) {
+  const covers = JSON.parse(localStorage.getItem('albumCovers') || {});
+  covers[date] = url;
+  localStorage.setItem('albumCovers', JSON.stringify(covers));
+  alert('✅ Album cover saved for ' + date);
+}
+
+
 function updateImageExpiry(url, expiresAt) {
   ['images', 'eventGallery'].forEach(key => {
     const data = JSON.parse(localStorage.getItem(key) || '[]');
@@ -865,5 +923,4 @@ cleanupExpiredPhotos();
 </body>
 
 </html>
-
 
