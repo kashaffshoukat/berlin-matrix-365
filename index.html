@@ -503,7 +503,7 @@ const events = [
     index: 4,
     label: 'Friday',
     weekday: 'Fri',
-    title: 'Clubnight Friday',
+    title: 'Island Moments Gallery Friday',
     music: ['House', 'EDM'],
     dj: 'DJ Mike',
     note: 'Biggest party of the week',
@@ -639,7 +639,7 @@ let currentLang='en';
 
 const translations={
   en:{
-    club:'Clubnights',
+    club:'Island Moments Gallerys',
     search:'Search events...',
     gallery:'Event Gallery',
     gallerySub:'All photos free at launch • Tap to open • Download available',
@@ -834,44 +834,38 @@ function submitReview(){
   document.getElementById('reviewText').value = '';
   alert('Thank you for your review!');
 }
-function handleDownload(url) {
+function handleDownload(imageUrl) {
   const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
 
-  // ❌ Block if payments disabled
   if (!paymentsEnabled) {
     alert('Payments are disabled by admin');
     return;
   }
 
-  // ✅ Force download to device
-  fetch(url)
-    .then(response => response.blob())
-    .then(blob => {
-      const a = document.createElement('a');
-      const objectUrl = URL.createObjectURL(blob);
-
-      a.href = objectUrl;
-      a.download = 'photo.jpg'; // saved to device
-
-      document.body.appendChild(a);
-      a.click();
-
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objectUrl);
-    })
-    .catch(() => {
-      alert('Download failed');
-    });
+  fetch("http://localhost:4242/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageUrl })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.url) {
+      window.location.href = data.url; // 👉 Stripe Checkout
+    }
+  })
+  .catch(() => alert("Payment failed"));
 }
 
-// ✅ After Stripe success → force download
-const params = new URLSearchParams(window.location.search);
-if (params.get("paid") === "true") {
-  const imageUrl = params.get("url");
-  if (imageUrl) {
-    window.location.href = `http://localhost:4242/download?url=${imageUrl}`;
-  }
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
 }
+
 
 function cleanupExpiredPhotos() {
   const now = Date.now();
@@ -886,8 +880,25 @@ function cleanupExpiredPhotos() {
 cleanupExpiredPhotos();
 
 renderEventGallery();
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("paid") === "true") {
+  const imageUrl = params.get("url");
+  const sessionId = params.get("session_id");
+
+  window.location.href =
+    `http://localhost:4242/download?` +
+    `session_id=${sessionId}&url=${encodeURIComponent(imageUrl)}`;
+}
 
 </script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe(
+    "pk_test_51RExonP3IGBtyE3AuXHnPvTSXV0qkkXZpZcjOAVIBIRR6g3jX0lIgENADoEzwlZJWrCqvaV3oHZQtmhjqNivshFE00sWlLvzel"
+  );
+</script>
+
 <script src="firebase.js" type="module"></script>
 <script type="module" src="./auth.js"></script></body>
 </html>
