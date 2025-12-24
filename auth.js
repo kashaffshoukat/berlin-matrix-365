@@ -1,33 +1,41 @@
-import { 
-  signInWithEmailAndPassword 
+// auth.js
+import { auth, db } from "./firebase.js";
+import {
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
+// expose login globally
+window.login = async function () {
+  const email = document.getElementById("username")?.value;
+  const password = document.getElementById("password")?.value;
+  const error = document.getElementById("error");
 
-if (emailInput && passwordInput) {
-  // LOGIN PAGE LOGIC ONLY
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    // login code here
-  });
-}
+  if (error) error.style.display = "none";
 
+  try {
+    // Firebase login
+    const cred = await signInWithEmailAndPassword(auth, email, password);
 
-const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // Check admin role
+    const adminRef = doc(db, "admins", email);
+    const adminSnap = await getDoc(adminRef);
 
-const adminRef = doc(db, "admins", email);
-const adminSnap = await getDoc(adminRef);
+    if (!adminSnap.exists() || !adminSnap.data().active) {
+      throw new Error("Not an active admin");
+    }
 
-if (!adminSnap.exists()) {
-  throw new Error("Not an admin");
-}
+    // Success
+    window.location.href = "admin.html";
 
-if (!adminSnap.data().active) {
-  throw new Error("Admin inactive");
-}
-
-window.location.href = "admin.html";
-
+  } catch (err) {
+    if (error) {
+      error.style.display = "block";
+      error.textContent = err.message;
+    }
+    console.error(err);
+  }
+};
