@@ -1,1026 +1,872 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Island Moments Gallery</title>
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard – Island Moments Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1A1F2B;
+  --secondary:#00A6A6;
+  --accent:#F2C94C;
+  --matrix-blue:#223C52;
+}
 
-    <style>
-        :root {
-            --primary: #1A1F2B;
-            --secondary: #00A6A6;
-            --accent: #F2C94C;
-            --bg: #F8F9FA;
-        }
+*{box-sizing:border-box;margin:0;padding:0}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif
-        }
-
-        body {
-            display: flex;
-            min-height: 100vh;
-            background: var(--bg);
-            color: #111
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 35%;
-            background: var(--primary);
-            color: #fff;
-            padding: 24px 18px;
-        }
-
-        .sidebar h2 {
-            margin-bottom: 30px;
-            font-size: 22px
-        }
-
-        .nav a {
-            display: block;
-            padding: 14px 18px;
-            border-radius: 14px;
-            color: #fff;
-            text-decoration: none;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .nav a.active,
-        .nav a:hover {
-            background: rgba(255, 255, 255, .12)
-        }
-
-        /* MAIN */
-        .main {
-            flex: 1;
-            padding: 20px
-        }
-
-        .section {
-            display: none
-        }
-
-        /* TABS */
-        .tabs {
-            display: flex;
-            gap: 40px;
-            margin-bottom: 18px
-        }
-
-        .tab {
-            font-size: 20px;
-            cursor: pointer;
-            opacity: .5
-        }
-
-        .tab.active {
-            opacity: 1;
-            position: relative
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -8px;
-            width: 100%;
-            height: 3px;
-            background: #ff2e93;
-            border-radius: 3px;
-        }
-
-        /* UPLOAD */
-        .upload-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .upload-header h3 {
-            font-size: 26px
-        }
-
-        .upload-btn {
-            background: var(--secondary);
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .upload-btn input {
-            display: none
-        }
-
-        /* GALLERY */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 18px;
-        }
-
-        .media-item {
-            position: relative
-        }
-
-        .media-item img,
-        .media-item video {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 14px;
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0, 0, 0, .7);
-            color: #fff;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            opacity: 0;
-            transition: .2s;
-        }
-
-        .media-item:hover .delete-btn {
-            opacity: 1
-        }
-
-        /* ANALYTICS */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .analytics-card {
-            background: #fff;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .06);
-        }
-
-        .analytics-card p {
-            opacity: .6;
-            margin-bottom: 6px;
-        }
-
-        .analytics-card h3 {
-            font-size: 28px;
-        }
-        .countdown-badge{
-  position:absolute;
-  top:10px;
-  left:10px;
-  background:#111;
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0f1c29;
   color:#fff;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:600;
-  opacity:.85;
 }
-/* ===== EXPIRY CONTROL UI ===== */
-.expiry-box{
-  margin-top:10px;
-  padding:10px;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 6px 16px rgba(0,0,0,.06);
+/* ================= RESPONSIVE HEADER ================= */
+
+header{
+  padding:48px 56px 36px;
+  background:linear-gradient(180deg,#0b1622,#0f1c29);
+  position:relative;
 }
 
-.expiry-label{
-  font-size:12px;
-  font-weight:600;
-  color:#555;
-  margin-bottom:6px;
+/* Title */
+header h1{
+  font-size:clamp(26px,4vw,42px);
+  margin-bottom:14px;
+}
+
+/* Top right controls */
+.top-right-controls{
+  position:absolute;
+  top:24px;
+  right:32px;
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:14px;
 }
 
-.expiry-label span{
+/* Countdown */
+.countdown{
   font-size:14px;
+  font-weight:700;
+  padding:8px 16px;
+  border-radius:999px;
+  display:inline-block;
+  margin-bottom:14px;
 }
 
-.expiry-input{
+/* Days scroll */
+.days-scroll{
+  display:flex;
+  gap:24px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.day{
+  font-size:15px;
+  opacity:.6;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.day.active{
+  opacity:1;
+}
+
+/* Search */
+.search{
+  margin-top:22px;
+}
+
+.search input{
   width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  font-size:13px;
+  padding:14px 22px;
+  border-radius:999px;
+  border:none;
   outline:none;
-  transition:.2s;
+  font-size:15px;
 }
 
-.expiry-input:focus{
-  border-color:#00A6A6;
-  box-shadow:0 0 0 2px rgba(0,166,166,.15);
+/* ================= TABLET ================= */
+@media (max-width: 900px){
+  header{
+    padding:36px 32px;
+  }
+
+  .top-right-controls{
+    top:18px;
+    right:20px;
+  }
 }
 
-/* Countdown badge improvement */
-.countdown-badge{
-  background:linear-gradient(135deg,#111,#333);
-  box-shadow:0 4px 10px rgba(0,0,0,.3);
+/* ================= MOBILE ================= */
+@media (max-width: 600px){
+  header{
+    padding:26px 18px 30px;
+  }
+
+  /* Move controls into flow */
+  .top-right-controls{
+    position:static;
+    justify-content:flex-end;
+    margin-bottom:14px;
+  }
+
+  header h1{
+    text-align:left;
+  }
+
+  .countdown{
+    font-size:13px;
+    padding:6px 12px;
+  }
+
+  .days-scroll{
+    gap:18px;
+  }
+
+  .search input{
+    padding:12px 18px;
+    font-size:14px;
+  }
 }
+
+
+main{padding:40px 48px 80px}
+
+.event-card{
+  display:grid;
+  grid-template-columns:480px 1fr;
+  background:var(--matrix-blue);
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.event-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.event-info{
+  padding:36px 40px;
+  background:linear-gradient(90deg,rgba(34,60,82,.95),rgba(34,60,82,.85));
+}
+
+.event-info h2{font-size:28px;margin-bottom:10px}
+
+.actions{
+  margin-top:20px;
+  display:flex;
+  gap:14px;
+}
+
+.btn{
+  padding:12px 26px;
+  border-radius:30px;
+  background:#fff;
+  color:#0f1c29;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.btn-outline{
+  background:transparent;
+  border:1px solid #fff;
+  color:#fff;
+}
+
+/* Gallery */
+.gallery-section{
+  padding:80px 48px;
+  background:#0b1622;
+}
+
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+}
+
+.gallery-grid img{
+  width:100%;
+  border-radius:14px;
+  cursor:pointer;
+}
+
+/* Chat */
+.support-chat{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:280px;
+  background:#fff;
+  color:#000;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.chat-header{
+  background:var(--accent);
+  padding:12px;
+  text-align:center;
+  font-weight:700;
+}
+
+.chat-body{padding:12px}
+
+.chat-input{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-top:1px solid #ddd;
+}
+
+.top-right-controls{
+  position:absolute;
+  top:20px;
+  right:30px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* ADMIN BUTTON */
+#adminBtn{
+  background:transparent;
+  border:2px solid #fff;
+  color:#fff;
+  padding:8px 22px;
+  border-radius:999px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  line-height:1;
+  transition:.25s ease;
+}
+
+#adminBtn:hover{
+  background:#fff;
+  color:#0f1c29;
+}
+
+/* LANGUAGE SWITCH */
+#langSwitch{
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  line-height:1;
+  padding:8px 10px;
+  user-select:none;
+}.payment-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e11d48;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 5;
+}
+/* ===== MOBILE EVENT CARD FIX ===== */
+@media (max-width: 768px) {
+  .event-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+  }
+
+  .event-info {
+    padding: 40px;
+    background: linear-gradient(
+      180deg,
+      rgba(34,60,82,0.95),
+      rgba(34,60,82,1)
+    );
+  }
+}
+/* ===== MOBILE EVENT CARD BUTTON FIX ===== */
+@media (max-width: 768px) {
+
+  .event-info .actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .event-info .actions .btn {
+    width: 100%;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 16px;
+    border-radius: 999px;
+  }
+
+}
+/* ===== NAVBAR ONE LINE ===== */
+.navbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+ min-height:80px;          /* 👈 controls height */
+  padding:0 56px; 
+  background:linear-gradient(180deg,#0b1622,#0f1c29);
+}
+
+/* LEFT */
 .nav-left{
   display:flex;
   align-items:center;
-  gap:4px;
+  gap:14px;
 }
 
 .nav-logo{
   height:100px;
   width:auto;
 }
-@media (max-width:600px){
- 
-.sidebar{
-  width: 55%;
+
+/* RIGHT */
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:14px;
 }
+.navbar h1{
+  margin:0;                 /* 👈 removes extra height */
+  font-size:32px;
+}
+
+/* REMOVE OLD ABSOLUTE POSITIONING */
+.top-right-controls{
+  position:static !important;
+}
+
+/* MOBILE */
+@media (max-width:600px){
+  .navbar{
+    padding:20px 18px;
+  }
+
   .nav-logo{
     height:100px;
   }
 
   .nav-left h1{
-    font-size:18px;
+    font-size:24px;
   }
 }
-.cover-btn {
-  position: absolute;
-  top: 10px;
-  right: 48px; /* leaves space for delete (X) */
-  background: rgba(0, 166, 166, 0.95);
-  color: #fff;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  z-index: 6;
-  transition: transform .15s ease, box-shadow .15s ease;
-}
 
-.cover-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,.25);
-}
-.top-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-}
-
-.logout-btn {
-  background: transparent;
-  border: 2px solid #ef4444;
-  color: #ef4444;
-  padding: 8px 18px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.logout-btn:hover {
-  background: #ef4444;
-  color: #fff;
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-box {
-  background: #fff;
-  padding: 26px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 360px;
-  text-align: center;
-}
-
-.modal-box h3 {
-  margin-bottom: 8px;
-}
-
-.modal-box p {
-  opacity: .7;
-  margin-bottom: 18px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.btn-danger {
-  background: #ef4444;
-  border: none;
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2px solid #ddd;
-  padding: 10px 18px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-
-    </style>
+</style>
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-           <div class="nav-left">
+<header class="navbar">
+
+  <!-- LEFT: LOGO + TITLE -->
+  <div class="nav-left">
     <img src="flogo.png" alt="Island Moments Gallery" class="nav-logo">
-    <h6>Island Moments Gallery</h6>
+    <h4>Island Moments Gallery</h4>
   </div>
-        <div class="nav">
-            <a class="active" onclick="showSection('upload', this)">Upload</a>
-            <a onclick="showSection('analytics', this)">Analytics</a>
-            <a onclick="showSection('pricing', this)">Pricing</a>
-            <a onclick="showSection('reviews', this)">Reviews</a>
-            <a onclick="showSection('instagram', this)">Instagram</a>
 
-<a onclick="showSection('payments', this)">Payments</a>
-
-
-        </div>
-    </div>
-
-    <!-- MAIN -->
-    <div class="main">
-
-        <!-- UPLOAD SECTION -->
-        <div id="upload" class="section">
-
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('photo', this)">Photos</div>
-            </div>
-
-            <div class="upload-header">
-              <!-- Progress Bar -->
-<div id="progressWrapper" style="display:none;margin-bottom:16px">
-  <div style="
-    width:100%;
-    background:#e5e7eb;
-    border-radius:999px;
-    overflow:hidden;
-    height:10px;
-  ">
-    <div id="progressBar" style="
-      width:0%;
-      height:100%;
-      background:linear-gradient(90deg,#00A6A6,#22c55e);
-      transition:width .2s ease;
-    "></div>
+  <!-- RIGHT: CONTROLS -->
+  <div class="nav-right">
+    <button id="adminBtn">Admin</button>
+    <div id="langSwitch" title="Deutsch">DE</div>
   </div>
-  <p id="progressText" style="margin-top:6px;font-size:12px;opacity:.7">
-    Uploading...
-  </p>
+
+</header>
+
+<header>
+
+
+
+<div id="countdown" class="countdown"></div>
+<div class="days-scroll" id="days"></div>
+
+<div class="search">
+  <input id="search" placeholder="Search events..." />
+</div>
+</header>
+
+<div id="noResults" style="
+  display:none;
+  padding:40px;
+  text-align:center;
+  opacity:.7;
+  font-size:18px;
+">
+  No event found
 </div>
 
-                <h3 id="eventDate"></h3>
-                <div class="top-actions">
-                  <input 
-  type="file" 
-  id="fileInput" 
-  multiple 
-  accept="image/*,video/*" 
-  style="display:none"
-/>
+<main>
+  <div id="event"></div>
+</main>
 
-<button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-  Upload
-</button>
+<section class="gallery-section">
+  <h2>Event Gallery</h2>
+  <p class="gallery-sub">All photos free at launch • Tap to open • Download available</p>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+<section style="margin:60px auto;max-width:80%">
+  <h2>Leave a Review</h2>
 
-<button id="logoutBtn" class="logout-btn" onclick="logout()">Logout</button>
+  <select id="reviewRating" style="width:100%;padding:12px;margin:10px 0;border-radius:10px">
+    <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+    <option value="4">⭐⭐⭐⭐ (4)</option>
+    <option value="3">⭐⭐⭐ (3)</option>
+    <option value="2">⭐⭐ (2)</option>
+    <option value="1">⭐ (1)</option>
+  </select>
+
+  <textarea
+    id="reviewText"
+    placeholder="Share your experience…"
+    style="width:100%;height:90px;padding:12px;border-radius:10px"
+  ></textarea>
+
+  <button
+    onclick="submitReview()"
+    style="margin-top:12px;background:#00A6A6;color:#fff;border:none;padding:12px 20px;border-radius:30px;cursor:pointer"
+  >
+    Submit Review
+  </button>
+</section>
+
+<div class="support-chat">
+  <div class="chat-header">Support</div>
+  <div class="chat-body" id="chatBody">
+    <div class="bot">👋 Hi! What’s your Instagram handle?</div>
+  </div>
+  <input class="chat-input" placeholder="@yourhandle" />
 </div>
 
-            </div>
-<div style="display:flex;gap:10px;align-items:center">
+<script>
   
-</div>
+/* ================= DATA ================= */
+const today = new Date();
+
+const events = [
+  {
+    index: 0,
+    label: 'Monday',
+    weekday: 'Mon',
+    date: '',
+    title: 'Matrix Monday – Hip Hop & RnB',
+    music: ['Hip Hop', 'RnB', 'Urban'],
+    dj: 'DJ Rasimcan',
+    note: 'Free entry before 23:00',
+    img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819'
+  },
+  {
+    index: 1,
+    label: 'Tuesday',
+    weekday: 'Tue',
+    date: '',
+    title: 'Electric Tuesday – Techno',
+    music: ['Techno', 'Minimal'],
+    dj: 'DJ Le Alen',
+    note: 'All night techno',
+    img: 'https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2'
+  },
+  {
+    index: 2,
+    label: 'Wednesday',
+    weekday: 'Wed',
+    date: '',
+    title: 'Island Wednesday – Afrobeats',
+    music: ['Afrobeats', 'Dancehall'],
+    dj: 'DJ Lito Bolton',
+    note: 'Island vibes all night',
+    img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30'
+  },
+  {
+    index: 3,
+    label: 'Thursday',
+    weekday: 'Thu',
+    title: 'Latin Night',
+    music: ['Reggaeton', 'Latin'],
+    dj: 'DJ Carlos',
+    note: 'Hot Latin rhythms',
+    img: 'https://images.unsplash.com/photo-1545128485-c400e7702796'
+  },
+  {
+    index: 4,
+    label: 'Friday',
+    weekday: 'Fri',
+    title: 'Island Moments Gallery Friday',
+    music: ['House', 'EDM'],
+    dj: 'DJ Mike',
+    note: 'Biggest party of the week',
+    img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063'
+  },
+  {
+    index: 5,
+    label: 'Saturday',
+    weekday: 'Sat',
+    title: 'Main Event Saturday',
+    music: ['Mixed', 'Charts'],
+    dj: 'Resident DJs',
+    note: 'Peak night',
+    img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7'
+  },
+  {
+    index: 6,
+    label: 'Sunday',
+    weekday: 'Sun',
+    title: 'After Hour Sunday',
+    music: ['Chill', 'Deep House'],
+    dj: 'DJ Relax',
+    note: 'Smooth closing vibes',
+    img: 'https://images.unsplash.com/photo-1515169067865-5387ec356754'
+  }
+];
 
 
-            <div class="gallery-grid" id="gallery"></div>
-        </div>
+/* ================= ELEMENTS ================= */
+const daysEl=document.getElementById('days');
+const eventEl=document.getElementById('event');
+const searchEl=document.getElementById('search');
+const countdownEl=document.getElementById('countdown');
+const flag=document.getElementById('langSwitch');
+const noResultsEl=document.getElementById('noResults');
 
-        <!-- ANALYTICS SECTION -->
-        <div id="analytics" class="section">
+/* ================= BUILD DAYS (NEW – SAFE ADDITION) ================= */
+function buildDays(filterIndex=null){
+  daysEl.innerHTML='';
+  const used=new Set();
 
-            <h2 style="margin-bottom:20px">Analytics</h2>
+  events.forEach(e=>{
+    if(filterIndex!==null && e.index!==filterIndex) return;
 
-            <div class="analytics-grid">
-                <div class="analytics-card">
-                    <p>Visits</p>
-                    <h3 id="visits">0</h3>
-                </div>
+    const key=e.label==='Today'?'Today':e.weekday;
+    if(used.has(key)) return;
+    used.add(key);
 
-                <div class="analytics-card">
-                    <p>Unique Users</p>
-                    <h3 id="users">0</h3>
-                </div>
-
-                <div class="analytics-card">
-                    <p>Uploads</p>
-                    <h3 id="uploads">0</h3>
-                </div>
-
-                <div class="analytics-card">
-                    <p>Downloads</p>
-                    <h3 id="downloads">0</h3>
-                </div>
-            </div>
-
-        </div>
-        <div id="pricing" class="section">
-
-            <h2 style="margin-bottom:20px">Flexible Pricing</h2>
-
-            <div style="
-    max-width:100%;
-    background:#fff;
-    padding:24px;
-    border-radius:18px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08)
-  ">
-                <p style="margin-bottom:10px">Default Price per Download</p>
-
-                <div style="display:flex;align-items:center;gap:10px">
-                    <span style="font-size:22px">$</span>
-                    <input id="priceInput" type="number" min="1" step="0.5" style="
-          font-size:20px;
-          padding:10px;
-          width:100%;
-          border-radius:10px;
-          border:1px solid #ddd
-        " />
-                </div>
-
-                <button onclick="savePrice()" style="
-        margin-top:16px;
-        background:#00A6A6;
-        color:white;
-        border:none;
-        padding:12px 20px;
-        border-radius:30px;
-        cursor:pointer
-      ">
-                    Save Price
-                </button>
-
-                <p id="priceSaved" style="margin-top:12px;color:green;display:none">
-                    ✅ Price updated
-                </p>
-            </div>
-
-        </div>
-        <div id="reviews" class="section">
-
-            <h2 style="margin-bottom:20px">Visitor Reviews</h2>
-
-            <div id="reviewsList"></div>
-
-        </div>
-
-<div id="instagram" class="section">
-
-  <h2 style="margin-bottom:20px">Instagram Integration</h2>
-
-  <div style="
-    max-width:100%;
-    background:#fff;
-    padding:24px;
-    border-radius:18px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08)
-  ">
-
-    <label style="display:block;margin-bottom:10px">
-      Instagram Profile URL
-    </label>
-    <input id="igProfile" type="text" placeholder="https://instagram.com/yourpage"
-      style="width:100%;padding:12px;border-radius:10px;border:1px solid #ddd" />
-
-    <label style="display:block;margin:16px 0 10px">
-      Number of Posts to Show
-    </label>
-    <input id="igCount" type="number" min="1" max="12"
-      style="width:100%;padding:12px;border-radius:10px;border:1px solid #ddd" />
-
-    <label style="display:flex;align-items:center;gap:10px;margin-top:16px">
-      <input type="checkbox" id="igEnabled" />
-      Enable Instagram Feed
-    </label>
-
-    <button onclick="saveInstagramSettings()" style="
-      margin-top:20px;
-      background:#00A6A6;
-      color:#fff;
-      border:none;
-      padding:12px 22px;
-      border-radius:30px;
-      cursor:pointer
-    ">
-      Save Settings
-    </button>
-
-  </div>
-</div>
-<div id="payments" class="section">
-  <h2 style="margin-bottom:20px">Payments</h2>
-
-  <div style="
-    background:#fff;
-    padding:24px;
-    border-radius:18px;
-    max-width:100%;
-    box-shadow:0 10px 25px rgba(0,0,0,.08)
-  ">
-    <p style="margin-bottom:12px;font-weight:600">
-      Activate Payments
-    </p>
-
-    <label style="display:flex;align-items:center;gap:12px;cursor:pointer">
-      <input type="checkbox" id="paymentToggle" />
-      <span>Enable paid downloads</span>
-    </label>
-
-
-  </div>
-</div>
-
-    </div>
-<div id="deleteModal" class="modal-overlay">
-  <div class="modal-box">
-    <h3>Delete Photo</h3>
-    <p>This photo will be permanently removed.</p>
-
-    <div class="modal-actions">
-      <button id="cancelDelete" class="btn-outline">Cancel</button>
-      <button id="confirmDelete" class="btn-danger">Delete</button>
-    </div>
-  </div>
-</div>
-
-    <script>
-        const dtInput = document.getElementById('availabilityDateTime');
-if (dtInput) {
-  const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
-function setDefaultDateTime() {
-  const input = document.getElementById('availabilityDateTime');
-  if (!input) return;
-
-  const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-  const pad = n => n.toString().padStart(2, '0');
-
-  const localValue =
-    d.getFullYear() + '-' +
-    pad(d.getMonth() + 1) + '-' +
-    pad(d.getDate()) + 'T' +
-    pad(d.getHours()) + ':' +
-    pad(d.getMinutes());
-
-  input.value = localValue;
-}
-
-setDefaultDateTime();
-}
-
-        function updateAnalytics(key, amount = 1) {
-            const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
-            analytics[key] = (analytics[key] || 0) + amount;
-            localStorage.setItem('analytics', JSON.stringify(analytics));
-        }
-
-        function renderAnalytics() {
-            const a = JSON.parse(localStorage.getItem('analytics') || '{}');
-            document.getElementById('visits').textContent = a.visits || 0;
-            document.getElementById('users').textContent = a.uniqueUsers || 0;
-            document.getElementById('uploads').textContent = a.uploads || 0;
-            document.getElementById('downloads').textContent = a.downloads || 0;
-        }
-        renderAnalytics();
-
-        // ===== ANALYTICS STORAGE =====
-        const analytics = JSON.parse(localStorage.getItem('analytics')) || {
-            visits: 0,
-            users: 1,
-            uploads: 0,
-            downloads: 0
-        };
-
-        // Count visit
-        analytics.visits += 1;
-        localStorage.setItem('analytics', JSON.stringify(analytics));
-
-       
-        /* ===== SIDEBAR TOGGLE ===== */
-       function showSection(id, el) {
-    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
-
-    document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
-    el.classList.add('active');
-
-    if (id === 'pricing') loadPrice();
-    if (id === 'reviews') loadReviews();
-    if (id === 'payments') loadPayments();
-
-}
-
-        function show(section) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
-
-            document.getElementById(section).classList.add('active');
-            event.target.classList.add('active');
-
-
-        }
-
-        /* DEFAULT VIEW */
-        showSection('upload', document.querySelector('.nav a'));
-
-        /* ===== YOUR EXISTING LOGIC (UNCHANGED) ===== */
-        let currentTab = 'photo';
-        const input = document.getElementById('fileInput');
-        const gallery = document.getElementById('gallery');
-
-        const CLOUD_NAME = 'doycqdgfl';
-        const UPLOAD_PRESET = 'dpghkzrw';
-
-        function switchTab(type, el) {
-            currentTab = type;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            input.accept = type === 'photo' ? 'image/*' : 'video/*';
-            render(type);
-        }
-
-      async function uploadImage(file) {
-  showProgress('Uploading media...');
-
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    const fd = new FormData();
-
-    fd.append('file', file);
-    fd.append('upload_preset', UPLOAD_PRESET);
-
-    const endpoint = file.type.startsWith('video/') ? 'video' : 'image';
-
-    xhr.open(
-      'POST',
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${endpoint}/upload`
-    );
-
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) {
-        const percent = Math.round((e.loaded / e.total) * 100);
-        updateProgress(percent, `Uploading... ${percent}%`);
-      }
-    };
-
-    xhr.onload = () => {
-      updateProgress(100, 'Processing...');
-      resolve(JSON.parse(xhr.responseText));
-    };
-
-    xhr.onerror = () => reject('Upload failed');
-
-    xhr.send(fd);
+    const d=document.createElement('div');
+    d.className='day'+((filterIndex===null && e.index===0)||(filterIndex===e.index)?' active':'');
+    d.textContent=key;
+    d.onclick=()=>selectEvent(e.index);
+    daysEl.appendChild(d);
   });
+}function getTodayIndex() {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+  return events.findIndex(e => e.weekday === today);
 }
 
 
-function saveImage(url, type) {
-  const items = JSON.parse(localStorage.getItem('images') || '[]');
-  const gallery = JSON.parse(localStorage.getItem('eventGallery') || '[]');
-
-  // Default: +24 hours
-  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
-  const today = new Date().toISOString().split('T')[0];
-
-  const item = { url, type, date: today, expiresAt };
-
-  items.unshift(item);
-  gallery.unshift(item);
-
-localStorage.setItem("images", JSON.stringify(items));
-localStorage.setItem('eventGallery', JSON.stringify(gallery));
-
-  updateAnalytics('uploads');
-  render(type);
+/* ================= RENDER ================= */
+function render(e){
+  eventEl.innerHTML=`
+  <div class="event-card">
+    <img src="${e.img}">
+    <div class="event-info">
+<div>${e.label} | 22:00</div>
+      <h2>${e.title}</h2>
+      <ul>
+        <li>🎵 ${e.music.join(' · ')}</li>
+        <li>🎧 ${e.dj}</li>
+        <li>⭐ ${e.note}</li>
+      </ul>
+      <div class="actions">
+        <a class="btn">More information</a>
+        <a class="btn btn-outline">Reserve a table</a>
+      </div>
+    </div>
+  </div>`;
 }
 
-function formatLocalDateTime(ts) {
-  const d = new Date(ts);
-  const pad = n => n.toString().padStart(2, '0');
-
-  return (
-    d.getFullYear() + '-' +
-    pad(d.getMonth() + 1) + '-' +
-    pad(d.getDate()) + 'T' +
-    pad(d.getHours()) + ':' +
-    pad(d.getMinutes())
-  );
+function selectEvent(i){
+  document.querySelectorAll('.day').forEach(d=>d.classList.remove('active'));
+  const e=events[i];
+  [...daysEl.children].forEach(d=>{
+    if(d.textContent===(e.label==='Today'?'Today':e.weekday)) d.classList.add('active');
+  });
+  render(e);
 }
 
-
-function getTimeLeft(expiresAt) {
-  const diff = expiresAt - Date.now();
-  if (diff <= 0) return 'Expired';
-
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-
-  return h > 0 ? `${h}h ${m}m left` : `${m}m left`;
+/* ================= COUNTDOWN ================= */
+function updateCountdown(){
+  const end=events.at(-1).dateObj;
+  const days=Math.max(0,Math.ceil((end-new Date())/86400000));
+  countdownEl.style.background=days<=5?'#e63946':days<=10?'#f2c94c':'#2ecc71';
+  countdownEl.textContent=`${days} ${translations[currentLang].daysLeft}`;
 }
 
+/* ================= SEARCH (UPDATED, SAFE) ================= */
+searchEl.addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase().trim();
 
-        function render(type = 'photo') {
-            gallery.innerHTML = '';
-          const now = Date.now();
-
-const items = JSON.parse(localStorage.getItem('images') || '[]')
-  .filter(i => i.type === type && i.expiresAt > now);
-
-            let last = '';
-            items.forEach(i => {
-                if (i.date !== last) {
-                    last = i.date;
-                    const h = document.createElement('h4');
-                    h.textContent = new Date(i.date).toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
-                    h.style.gridColumn = '1/-1';
-                    h.style.margin = '20px 0 10px';
-                    gallery.appendChild(h);
-                }
-
-                const w = document.createElement('div');
-                w.className = 'media-item';
-
-                if (type === 'photo') {
-                    const img = document.createElement('img');
-                    img.src = i.url;
-                    w.appendChild(img);
-                } else {
-                    const v = document.createElement('video');
-                    v.src = i.url;
-                    v.controls = true;
-                    w.appendChild(v);
-                }
-               const expiryBox = document.createElement('div');
-expiryBox.className = 'expiry-box';
-
-const label = document.createElement('div');
-label.className = 'expiry-label';
-label.innerHTML = `<span>⏰</span> Visible until`;
-
-const picker = document.createElement('input');
-picker.type = 'datetime-local';
-picker.className = 'expiry-input';
-picker.value = formatLocalDateTime(i.expiresAt);
-
-picker.onchange = () => {
-  const newTime = new Date(picker.value).getTime();
-  if (isNaN(newTime) || newTime <= Date.now()) {
-    alert('Invalid expiry time');
-    picker.value = formatLocalDateTime(i.expiresAt);
+  if(!q){
+    noResultsEl.style.display='none';
+    eventEl.style.display='block';
+    buildDays();
+    selectEvent(0);
     return;
   }
-  updateImageExpiry(i.url, newTime);
-};
 
-expiryBox.appendChild(label);
-expiryBox.appendChild(picker);
-w.appendChild(expiryBox);
+  const found=events.find(ev=>
+    ev.title.toLowerCase().includes(q)||
+    ev.music.join(' ').toLowerCase().includes(q)||
+    ev.dj.toLowerCase().includes(q)||
+    ev.note.toLowerCase().includes(q)
+  );
 
-
-
-const badge = document.createElement('div');
-badge.className = 'countdown-badge';
-badge.textContent = getTimeLeft(i.expiresAt);
-w.appendChild(badge);
-
-               const d = document.createElement('button');
-d.innerHTML = '🗑️';
-d.className = 'delete-btn';
-d.onclick = () => openDeleteModal(i.url);
-w.appendChild(d);
-
-// ===== SET ALBUM COVER BUTTON =====
-// const coverBtn = document.createElement('button');
-// coverBtn.className = 'cover-btn';
-// coverBtn.textContent = 'Set as Cover';
-// coverBtn.onclick = () => setAlbumCover(i.date, i.url);
-
-// ===== SET / CHANGE ALBUM COVER =====
-// ===== SET / CHANGE ALBUM COVER =====
-const coverBtn = document.createElement('button');
-coverBtn.className = 'cover-btn';
-coverBtn.textContent = 'Set as Cover';
-
-const covers = JSON.parse(localStorage.getItem('albumCovers') || '{}');
-
-// If this image is already the cover
-if (covers[i.date] === i.url) {
-  coverBtn.textContent = '✓ Cover';
-  coverBtn.style.background = '#22c55e';
-  coverBtn.style.cursor = 'default';
-}
-
-coverBtn.onclick = () => {
-  if (covers[i.date] === i.url) return;
-
-  if (!confirm('Set this image as the new cover for this day?')) return;
-
-  setAlbumCover(i.date, i.url);
-  render(currentTab);
-};
-gallery.appendChild(w);
-
-w.appendChild(coverBtn);
-            });
-        }
-setInterval(() => {
-  document.querySelectorAll('.countdown-badge').forEach(badge => {
-    const wrap = badge.parentElement;
-    const img = wrap.querySelector('img, video');
-    if (!img) return;
-
-    const url = img.src;
-
-    const all =
-JSON.parse(localStorage.getItem('images') || '[]')
-JSON.parse(localStorage.getItem('eventGallery') || '[]')
-
-    const item = all.find(i => i.url === url);
-    if (!item) return;
-
-    badge.textContent = getTimeLeft(item.expiresAt);
-  });
-}, 60000);
-function setAlbumCover(date, url) {
-  const covers = JSON.parse(localStorage.getItem('albumCovers') || {});
-  covers[date] = url;
-  localStorage.setItem('albumCovers', JSON.stringify(covers));
-  alert('✅ Album cover saved for ' + date);
-}
-
-
-function updateImageExpiry(url, expiresAt) {
-  ['images', 'eventGallery'].forEach(key => {
-    const data = JSON.parse(localStorage.getItem(key) || '[]');
-    const item = data.find(i => i.url === url);
-    if (item) item.expiresAt = expiresAt;
-    localStorage.setItem(key, JSON.stringify(data));
-  });
-
-  render(currentTab);
-}
-
-      
-
-        input.addEventListener('change', async () => {
-            for (const file of input.files) {
-                const data = await uploadImage(file);
-                if (data.secure_url) {
-                    saveImage(data.secure_url, file.type.startsWith('video/') ? 'video' : 'photo');
-                }
-            }
-            input.value = '';
-        });
-        function loadPrice() {
-            const price = localStorage.getItem('price') || 3;
-            document.getElementById('priceInput').value = price;
-        }
-
-        function savePrice() {
-            const price = document.getElementById('priceInput').value;
-            localStorage.setItem('price', price);
-            document.getElementById('priceSaved').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('priceSaved').style.display = 'none';
-            }, 1500);
-        }
-        function loadReviews() {
-            const list = document.getElementById('reviewsList');
-            const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-
-            list.innerHTML = '';
-
-            if (!reviews.length) {
-                list.innerHTML = '<p style="opacity:.6">No reviews yet</p>';
-                return;
-            }
-
-            reviews.forEach((r, i) => {
-                const div = document.createElement('div');
-                div.style = `
-      background:#fff;
-      padding:18px;
-      border-radius:14px;
-      margin-bottom:16px;
-      box-shadow:0 8px 20px rgba(0,0,0,.06)
-    `;
-
-                div.innerHTML = `
-      <strong>${'⭐'.repeat(r.rating)}</strong>
-      <p style="margin:8px 0">${r.text}</p>
-      <small style="opacity:.6">${new Date(r.date).toDateString()}</small>
-      <br><br>
-      <button 
-        style="background:#e11d48;color:#fff;border:none;padding:6px 12px;border-radius:8px;cursor:pointer"
-        onclick="deleteReview(${i})"
-      >
-        Delete
-      </button>
-    `;
-
-                list.appendChild(div);
-            });
-        }
-
-        function deleteReview(index) {
-            let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-            reviews.splice(index, 1);
-            localStorage.setItem('reviews', JSON.stringify(reviews));
-            loadReviews();
-        }
-
-        render();
-        function saveInstagramSettings() {
-  const settings = {
-    profile: document.getElementById('igProfile').value,
-    count: document.getElementById('igCount').value || 6,
-    enabled: document.getElementById('igEnabled').checked
-  };
-
-  localStorage.setItem('instagramSettings', JSON.stringify(settings));
-  alert('Instagram settings saved');
-}
-
-function loadInstagramSettings() {
-  const s = JSON.parse(localStorage.getItem('instagramSettings') || '{}');
-  if (!s) return;
-
-  document.getElementById('igProfile').value = s.profile || '';
-  document.getElementById('igCount').value = s.count || 6;
-  document.getElementById('igEnabled').checked = s.enabled || false;
-}
-function loadPayments() {
-  const enabled = localStorage.getItem('paymentsEnabled') === 'true';
-  document.getElementById('paymentToggle').checked = enabled;
-}
-
-function savePayments() {
-  const enabled = document.getElementById('paymentToggle').checked;
-  localStorage.setItem('paymentsEnabled', enabled);
-}
-
-document.addEventListener('change', (e) => {
-  if (e.target.id === 'paymentToggle') {
-    savePayments();
+  if(found){
+    noResultsEl.style.display='none';
+    eventEl.style.display='block';
+    buildDays(found.index);
+    selectEvent(found.index);
+  }else{
+    eventEl.style.display='none';
+    daysEl.innerHTML='';
+    noResultsEl.style.display='block';
+    noResultsEl.textContent=translations[currentLang].noResults;
   }
 });
+
+/* ================= LANGUAGE ================= */
+let currentLang='en';
+
+const translations={
+  en:{
+    club:'Island Moments Gallerys',
+    search:'Search events...',
+    gallery:'Event Gallery',
+    gallerySub:'All photos free at launch • Tap to open • Download available',
+    more:'More information',
+    reserve:'Reserve a table',
+    support:'Support',
+    chat:'👋 Hi! What’s your Instagram handle?',
+    daysLeft:'DAYS LEFT',
+    noResults:'No event found'
+  },
+  de:{
+    club:'Clubnächte',
+    search:'Events suchen…',
+    gallery:'Event Galerie',
+    gallerySub:'Alle Fotos gratis • Antippen • Download verfügbar',
+    more:'Mehr Informationen',
+    reserve:'Tisch reservieren',
+    support:'Support',
+    chat:'👋 Wie lautet dein Instagram-Name?',
+    daysLeft:'TAGE ÜBRIG',
+    noResults:'Kein Event gefunden'
+  }
+};
+
+flag.onclick=()=>{
+  currentLang=currentLang==='en'?'de':'en';
+  applyLang();
+};
+
+function applyLang(){
+  const t=translations[currentLang];
+  document.querySelector('h1').textContent=t.club;
+  searchEl.placeholder=t.search;
+  document.querySelector('.gallery-section h2').textContent=t.gallery;
+  document.querySelector('.gallery-sub').textContent=t.gallerySub;
+  document.querySelector('.chat-header').textContent=t.support;
+  document.getElementById('chatBody').innerHTML=`<div class="bot">${t.chat}</div>`;
+  document.querySelector('.btn').textContent=t.more;
+  document.querySelector('.btn-outline').textContent=t.reserve;
+  flag.textContent=currentLang==='en'?'DE':'EN';
+  updateCountdown();
+  if(noResultsEl.style.display==='block') noResultsEl.textContent=t.noResults;
+}
+
+/* ================= INIT ================= */
+const todayIndex = getTodayIndex();
+
+buildDays();
+selectEvent(todayIndex !== -1 ? todayIndex : 0);
+updateCountdown();
+setInterval(updateCountdown,3600000);
+
+document.getElementById('adminBtn').onclick=()=>{
+window.location.href='admin-login.html';
+};// ===== SIMPLE ANALYTICS =====
+const analytics = JSON.parse(localStorage.getItem('analytics') || '{}');
+
+analytics.visits = (analytics.visits || 0) + 1;
+
+// unique user (per browser)
+if (!localStorage.getItem('uniqueUser')) {
+  localStorage.setItem('uniqueUser', '1');
+  analytics.uniqueUsers = (analytics.uniqueUsers || 0) + 1;
+}
+
+localStorage.setItem('analytics', JSON.stringify(analytics));
+const galleryGrid = document.getElementById('galleryGrid');
+
+function renderEventGallery() {
+  const now = Date.now();
+
+  const items = JSON.parse(localStorage.getItem('eventGallery') || '[]')
+    .filter(i => i.expiresAt > now);
+
+  const covers = JSON.parse(localStorage.getItem('albumCovers') || '{}');
+
+  galleryGrid.innerHTML = '';
+  if (!items.length) return;
+
+  // group by date
+  const grouped = {};
+  items.forEach(i => {
+    if (!grouped[i.date]) grouped[i.date] = [];
+    grouped[i.date].push(i);
+  });
+
+  Object.keys(grouped).forEach(date => {
+    const coverUrl = covers[date] || grouped[date][0].url;
+
+    const wrap = document.createElement('div');
+    wrap.style.position = 'relative';
+    wrap.style.cursor = 'pointer';
+
+    const img = document.createElement('img');
+    img.src = coverUrl;
+
+    const label = document.createElement('div');
+    label.textContent = new Date(date).toDateString();
+    label.style.position = 'absolute';
+    label.style.bottom = '12px';
+    label.style.left = '12px';
+    label.style.background = 'rgba(0,0,0,.7)';
+    label.style.padding = '6px 12px';
+    label.style.borderRadius = '999px';
+    label.style.fontSize = '13px';
+    label.style.fontWeight = '600';
+
+    wrap.appendChild(img);
+    wrap.appendChild(label);
+
+    wrap.onclick = () => openAlbum(date, grouped[date]);
+
+    galleryGrid.appendChild(wrap);
+  });
+}
+function openAlbum(date, photos) {
+  galleryGrid.innerHTML = '';
+
+  const h = document.createElement('h2');
+  h.textContent = new Date(date).toDateString();
+  h.style.gridColumn = '1 / -1';
+  h.style.margin = '10px 0 20px';
+
+  galleryGrid.appendChild(h);
+
+  photos.forEach(item => {
+    const wrap = document.createElement('div');
+    wrap.style.position = 'relative';
+
+    // IMAGE
+    const img = document.createElement('img');
+    img.src = item.url;
+    img.style.width = '100%';
+    img.style.borderRadius = '14px';
+
+    // DOWNLOAD BUTTON
+    const btn = document.createElement('button');
+    btn.textContent = 'Download';
+    btn.className = 'btn';
+    btn.style.position = 'absolute';
+    btn.style.bottom = '12px';
+    btn.style.left = '50%';
+    btn.style.transform = 'translateX(-50%)';
+
+    btn.onclick = () => handleDownload(item.url);
+
+    // PAYMENT BADGE
+    const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+  if (paymentsEnabled) {
+  const badge = document.createElement('div');
+  badge.className = 'payment-badge';
+  badge.textContent = 'Paid';
+  wrap.appendChild(badge);
+}
+
+
+    wrap.appendChild(img);
+    wrap.appendChild(btn);
+    galleryGrid.appendChild(wrap);
+  });
+}
+
+function isPaid(url){
+  const paid = JSON.parse(localStorage.getItem('paid') || '[]');
+  return paid.includes(url);
+}
+
+function markPaid(url){
+  const paid = JSON.parse(localStorage.getItem('paid') || '[]');
+  paid.push(url);
+  localStorage.setItem('paid', JSON.stringify(paid));
+}
+function submitReview(){
+  const rating = document.getElementById('reviewRating').value;
+  const text = document.getElementById('reviewText').value.trim();
+
+  if (!text) {
+    alert('Please write a review');
+    return;
+  }
+
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+
+  reviews.unshift({
+    rating,
+    text,
+    date: Date.now()
+  });
+
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+
+  document.getElementById('reviewText').value = '';
+  alert('Thank you for your review!');
+}
+function handleDownload(imageUrl) {
+  const paymentsEnabled = localStorage.getItem('paymentsEnabled') === 'true';
+
+  if (!paymentsEnabled) {
+    alert('Payments are disabled by admin');
+    return;
+  }
+
+  fetch("http://localhost:4242/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageUrl })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.url) {
+      window.location.href = data.url; // 👉 Stripe Checkout
+    }
+  })
+  .catch(() => alert("Payment failed"));
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+
 function cleanupExpiredPhotos() {
   const now = Date.now();
 
@@ -1032,102 +878,27 @@ function cleanupExpiredPhotos() {
 }
 
 cleanupExpiredPhotos();
-let deleteTargetUrl = null;
 
-function openDeleteModal(url) {
-  deleteTargetUrl = url;
-  document.getElementById('deleteModal').style.display = 'flex';
+renderEventGallery();
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("paid") === "true") {
+  const imageUrl = params.get("url");
+  const sessionId = params.get("session_id");
+
+  window.location.href =
+    `http://localhost:4242/download?` +
+    `session_id=${sessionId}&url=${encodeURIComponent(imageUrl)}`;
 }
-
-document.getElementById('cancelDelete').onclick = () => {
-  deleteTargetUrl = null;
-  document.getElementById('deleteModal').style.display = 'none';
-};
-
-document.getElementById('confirmDelete').onclick = () => {
-  if (!deleteTargetUrl) return;
-
-  showProgress('Deleting photo...');
-  updateProgress(40);
-
-  setTimeout(() => {
-    ['images', 'eventGallery'].forEach(key => {
-      let data = JSON.parse(localStorage.getItem(key) || '[]');
-      data = data.filter(i => i.url !== deleteTargetUrl);
-      localStorage.setItem(key, JSON.stringify(data));
-    });
-
-    updateProgress(100, 'Deleted');
-
-    deleteTargetUrl = null;
-    document.getElementById('deleteModal').style.display = 'none';
-
-    render(currentTab);
-    hideProgress();
-  }, 500); // smooth UX delay
-};
-function toggleActions(disabled) {
-  document.querySelector('.upload-btn').disabled = disabled;
-  document.getElementById('logoutBtn').disabled = disabled;
-}
-// upload/delete
-toggleActions(false);
-
-function showProgress(text = 'Processing...') {
-  document.getElementById('progressWrapper').style.display = 'block';
-  document.getElementById('progressBar').style.width = '0%';
-  document.getElementById('progressText').textContent = text;
-}
-
-function updateProgress(percent, text) {
-  document.getElementById('progressBar').style.width = percent + '%';
-  if (text) document.getElementById('progressText').textContent = text;
-}
-
-function hideProgress() {
-  setTimeout(() => {
-    document.getElementById('progressWrapper').style.display = 'none';
-    document.getElementById('progressBar').style.width = '0%';
-  }, 400);
-}
-
-    </script>
-
-<script type="module">
- import { auth } from "./firebase.js";
-import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-// 🚨 Handle normal load + BACK button restore
-function protectAdminPage() {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.replace("admin-login.html");
-    }
-  });
-}
-
-protectAdminPage();
-
-// 🔁 Handle browser back/forward cache restore
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) {
-    // Page restored from cache
-    auth.currentUser || window.location.replace("admin-login.html");
-  }
-});
-
-// Logout
-window.logout = async function () {
-  await signOut(auth);
-  window.location.replace("admin-login.html");
-};
 
 </script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe(
+    "pk_test_51RExonP3IGBtyE3AuXHnPvTSXV0qkkXZpZcjOAVIBIRR6g3jX0lIgENADoEzwlZJWrCqvaV3oHZQtmhjqNivshFE00sWlLvzel"
+  );
+</script>
 
+<script src="firebase.js" type="module"></script>
 </body>
-
 </html>
-
