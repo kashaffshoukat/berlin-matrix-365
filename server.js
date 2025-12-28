@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔑 CLIENT WILL SEND THESE
-const STRIPE_SECRET_KEY = "sk_test_PASTE_CLIENT_KEY_HERE";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 // ✅ Create Stripe Checkout Session
