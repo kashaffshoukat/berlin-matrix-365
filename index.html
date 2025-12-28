@@ -842,18 +842,23 @@ function handleDownload(imageUrl) {
     return;
   }
 
-  fetch("http://localhost:4242/create-checkout-session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ imageUrl })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.url) {
-      window.location.href = data.url; // 👉 Stripe Checkout
-    }
-  })
-  .catch(() => alert("Payment failed"));
+fetch("/api/create-checkout-session", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ imageUrl })
+})
+.then(res => res.json())
+.then(data => {
+  if (data.url) {
+    window.location.href = data.url; // 👉 Stripe Checkout
+  } else {
+    alert("Failed to create checkout session");
+  }
+})
+.catch(err => {
+  console.error(err);
+  alert("Payment failed");
+});
 }
 
 function loadImage(src) {
@@ -886,10 +891,15 @@ if (params.get("paid") === "true") {
   const imageUrl = params.get("url");
   const sessionId = params.get("session_id");
 
+  if (!sessionId || !imageUrl) {
+    alert("Invalid payment session");
+    return;
+  }
+
   window.location.href =
-    `http://localhost:4242/download?` +
-    `session_id=${sessionId}&url=${encodeURIComponent(imageUrl)}`;
+    `/api/download?session_id=${sessionId}&url=${encodeURIComponent(imageUrl)}`;
 }
+
 
 </script>
 <script src="https://js.stripe.com/v3/"></script>
@@ -900,5 +910,5 @@ if (params.get("paid") === "true") {
 </script>
 
 <script src="firebase.js" type="module"></script>
-</body>
+<script type="module" src="./auth.js"></script></body>
 </html>
