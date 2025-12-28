@@ -29,7 +29,7 @@ window.login = async function () {
     }
 
     // Success
-    window.location.href = "admin.html";
+    window.location.href = "index.html";
 
   } catch (err) {
     if (error) {
@@ -39,3 +39,4 @@ window.login = async function () {
     console.error(err);
   }
 };
+
