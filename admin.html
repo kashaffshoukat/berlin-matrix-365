@@ -2,6 +2,10 @@
 <html lang="en">
 
 <head>
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard – Island Moments Gallery</title>
@@ -280,7 +284,80 @@
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(0,0,0,.25);
 }
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
 
+.logout-btn {
+  background: transparent;
+  border: 2px solid #ef4444;
+  color: #ef4444;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 26px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.modal-box h3 {
+  margin-bottom: 8px;
+}
+
+.modal-box p {
+  opacity: .7;
+  margin-bottom: 18px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-danger {
+  background: #ef4444;
+  border: none;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #ddd;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+}
 
 
     </style>
@@ -318,11 +395,44 @@
             </div>
 
             <div class="upload-header">
+              <!-- Progress Bar -->
+<div id="progressWrapper" style="display:none;margin-bottom:16px">
+  <div style="
+    width:100%;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    height:10px;
+  ">
+    <div id="progressBar" style="
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#00A6A6,#22c55e);
+      transition:width .2s ease;
+    "></div>
+  </div>
+  <p id="progressText" style="margin-top:6px;font-size:12px;opacity:.7">
+    Uploading...
+  </p>
+</div>
+
                 <h3 id="eventDate"></h3>
-                <label class="upload-btn">
-                    Upload
-                    <input type="file" id="fileInput" multiple />
-                </label>
+                <div class="top-actions">
+                  <input 
+  type="file" 
+  id="fileInput" 
+  multiple 
+  accept="image/*,video/*" 
+  style="display:none"
+/>
+
+<button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+  Upload
+</button>
+
+<button id="logoutBtn" class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
             </div>
 <div style="display:flex;gap:10px;align-items:center">
   
@@ -472,14 +582,22 @@
       <span>Enable paid downloads</span>
     </label>
 
-    <p style="margin-top:14px;opacity:.6;font-size:14px">
-      Bank details are already stored internally.<br>
-      Payments are disabled by default.
-    </p>
+
   </div>
 </div>
 
     </div>
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Delete Photo</h3>
+    <p>This photo will be permanently removed.</p>
+
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn-outline">Cancel</button>
+      <button id="confirmDelete" class="btn-danger">Delete</button>
+    </div>
+  </div>
+</div>
 
     <script>
         const dtInput = document.getElementById('availabilityDateTime');
@@ -533,17 +651,7 @@ setDefaultDateTime();
         analytics.visits += 1;
         localStorage.setItem('analytics', JSON.stringify(analytics));
 
-        // Render analytics
-        function renderAnalytics() {
-            const data = JSON.parse(localStorage.getItem('analytics')) || {};
-            document.getElementById('visits').textContent = data.visits || 0;
-            document.getElementById('users').textContent = data.users || 1;
-            document.getElementById('uploads').textContent = data.uploads || 0;
-            document.getElementById('downloads').textContent = data.downloads || 0;
-        }
-
-        renderAnalytics();
-
+       
         /* ===== SIDEBAR TOGGLE ===== */
        function showSection(id, el) {
     document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
@@ -587,18 +695,41 @@ setDefaultDateTime();
             render(type);
         }
 
-        async function uploadImage(file) {
-            const fd = new FormData();
-            fd.append('file', file);
-            fd.append('upload_preset', UPLOAD_PRESET);
-            const endpoint = file.type.startsWith('video/') ? 'video' : 'image';
+      async function uploadImage(file) {
+  showProgress('Uploading media...');
 
-            const res = await fetch(
-                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${endpoint}/upload`,
-                { method: 'POST', body: fd }
-            );
-            return res.json();
-        }
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const fd = new FormData();
+
+    fd.append('file', file);
+    fd.append('upload_preset', UPLOAD_PRESET);
+
+    const endpoint = file.type.startsWith('video/') ? 'video' : 'image';
+
+    xhr.open(
+      'POST',
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${endpoint}/upload`
+    );
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        updateProgress(percent, `Uploading... ${percent}%`);
+      }
+    };
+
+    xhr.onload = () => {
+      updateProgress(100, 'Processing...');
+      resolve(JSON.parse(xhr.responseText));
+    };
+
+    xhr.onerror = () => reject('Upload failed');
+
+    xhr.send(fd);
+  });
+}
+
 
 function saveImage(url, type) {
   const items = JSON.parse(localStorage.getItem('images') || '[]');
@@ -721,11 +852,12 @@ badge.className = 'countdown-badge';
 badge.textContent = getTimeLeft(i.expiresAt);
 w.appendChild(badge);
 
-                const d = document.createElement('button');
-                d.textContent = '✕';
-                d.className = 'delete-btn';
-                d.onclick = () => deleteItem(i.url);
-                w.appendChild(d);
+               const d = document.createElement('button');
+d.innerHTML = '🗑️';
+d.className = 'delete-btn';
+d.onclick = () => openDeleteModal(i.url);
+w.appendChild(d);
+
 // ===== SET ALBUM COVER BUTTON =====
 // const coverBtn = document.createElement('button');
 // coverBtn.className = 'cover-btn';
@@ -797,12 +929,7 @@ function updateImageExpiry(url, expiresAt) {
   render(currentTab);
 }
 
-        function deleteItem(url) {
-            let items = JSON.parse(localStorage.getItem('images') || '[]');
-            items = items.filter(i => i.url !== url);
-            localStorage.setItem('images', JSON.stringify(items));
-            render(currentTab);
-        }
+      
 
         input.addEventListener('change', async () => {
             for (const file of input.files) {
@@ -917,8 +1044,100 @@ function cleanupExpiredPhotos() {
 }
 
 cleanupExpiredPhotos();
+let deleteTargetUrl = null;
+
+function openDeleteModal(url) {
+  deleteTargetUrl = url;
+  document.getElementById('deleteModal').style.display = 'flex';
+}
+
+document.getElementById('cancelDelete').onclick = () => {
+  deleteTargetUrl = null;
+  document.getElementById('deleteModal').style.display = 'none';
+};
+
+document.getElementById('confirmDelete').onclick = () => {
+  if (!deleteTargetUrl) return;
+
+  showProgress('Deleting photo...');
+  updateProgress(40);
+
+  setTimeout(() => {
+    ['images', 'eventGallery'].forEach(key => {
+      let data = JSON.parse(localStorage.getItem(key) || '[]');
+      data = data.filter(i => i.url !== deleteTargetUrl);
+      localStorage.setItem(key, JSON.stringify(data));
+    });
+
+    updateProgress(100, 'Deleted');
+
+    deleteTargetUrl = null;
+    document.getElementById('deleteModal').style.display = 'none';
+
+    render(currentTab);
+    hideProgress();
+  }, 500); // smooth UX delay
+};
+function toggleActions(disabled) {
+  document.querySelector('.upload-btn').disabled = disabled;
+  document.getElementById('logoutBtn').disabled = disabled;
+}
+// upload/delete
+toggleActions(false);
+
+function showProgress(text = 'Processing...') {
+  document.getElementById('progressWrapper').style.display = 'block';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressText').textContent = text;
+}
+
+function updateProgress(percent, text) {
+  document.getElementById('progressBar').style.width = percent + '%';
+  if (text) document.getElementById('progressText').textContent = text;
+}
+
+function hideProgress() {
+  setTimeout(() => {
+    document.getElementById('progressWrapper').style.display = 'none';
+    document.getElementById('progressBar').style.width = '0%';
+  }, 400);
+}
 
     </script>
+
+<script type="module">
+ import { auth } from "./firebase.js";
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// 🚨 Handle normal load + BACK button restore
+function protectAdminPage() {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.replace("admin-login.html");
+    }
+  });
+}
+
+protectAdminPage();
+
+// 🔁 Handle browser back/forward cache restore
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    // Page restored from cache
+    auth.currentUser || window.location.replace("admin-login.html");
+  }
+});
+
+// Logout
+window.logout = async function () {
+  await signOut(auth);
+  window.location.replace("admin-login.html");
+};
+
+</script>
 
 </body>
 
