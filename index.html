@@ -1104,7 +1104,7 @@ import {
 function protectAdminPage() {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
-      window.location.replace("admin-login.html");
+      window.location.replace("index.html");
     }
   });
 }
@@ -1115,14 +1115,14 @@ protectAdminPage();
 window.addEventListener("pageshow", (event) => {
   if (event.persisted) {
     // Page restored from cache
-    auth.currentUser || window.location.replace("admin-login.html");
+    auth.currentUser || window.location.replace("index.html");
   }
 });
 
 // Logout
 window.logout = async function () {
   await signOut(auth);
-  window.location.replace("admin-login.html");
+  window.location.replace("index.html");
 };
 
 </script>
@@ -1130,4 +1130,5 @@ window.logout = async function () {
 </body>
 
 </html>
+
 
